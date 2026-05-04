@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 from google import genai
+from flask_cors import CORS   # ✅ IMPORT
 import os
 
 app = Flask(__name__)
+CORS(app)   # ✅ ADD HERE (right after app creation)
 
-# 🔑 Add your API key here
-client = genai.Client(api_key=os.getenv("AIzaSyBn1PbYfedPwXURZH6x13T0lks9um6-Pqo"))
+# ✅ FIX API KEY (use environment variable)
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @app.route("/")
 def home():
@@ -21,7 +23,6 @@ def chat():
     )
 
     return jsonify({"reply": response.text})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
