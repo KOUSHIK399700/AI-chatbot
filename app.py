@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # 🔑 Add your API key here
-client = genai.Client(api_key="AIzaSyBn1PbYfedPwXURZH6x13T0lks9um6-Pqo")
+client = genai.Client(api_key=os.getenv("AIzaSyBn1PbYfedPwXURZH6x13T0lks9um6-Pqo"))
 
 @app.route("/")
 def home():
