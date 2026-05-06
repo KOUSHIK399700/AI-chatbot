@@ -1,28 +1,63 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from google import genai
-from flask_cors import CORS   # ✅ IMPORT
 import os
 
 app = Flask(__name__)
-CORS(app)   # ✅ ADD HERE (right after app creation)
+CORS(app)
 
-# ✅ FIX API KEY (use environment variable)
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# Gemini Client
+client = genai.Client(
+    api_key=os.getenv("AIzaSyDlWfPiXWZPzhX1IfBPBizI9c_WVYYJtCs")
+)
 
+# Home Route
 @app.route("/")
 def home():
-    return "Free Telugu AI Assistant Running!"
+    return "Free Telugu AI Assistant Running Successfully!"
 
+# Chat Route
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json["message"]
+    try:
+        data = request.get_json()
 
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=f"You are a helpful assistant. Reply in Telugu or English clearly.\nUser: {user_message}"
-    )
+        # Check message exists
+        if not data or "message" not in data:
+            return jsonify({
+                "reply": "Please send a message"
+            }), 400
 
-    return jsonify({"reply": response.text})
+        user_message = data["message"]
 
+        # Gemini Response
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=f"""
+You are a helpful AI assistant.
+
+Rules:
+- Reply clearly
+- Use Telugu or English
+- Keep answers simple and friendly
+
+User: {user_message}
+"""
+        )
+
+        return jsonify({
+            "reply": response.text
+        })
+
+    except Exception as e:
+        return jsonify({
+            "reply": f"Server Error: {str(e)}"
+        }), 500
+
+
+# Run Flask App
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000))
+    )
