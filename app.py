@@ -8,7 +8,7 @@ CORS(app)
 
 # Gemini Client
 client = genai.Client(
-    api_key=os.getenv("AIzaSyDlWfPiXWZPzhX1IfBPBizI9c_WVYYJtCs")
+    api_key=os.getenv("GEMINI_API_KEY")
 )
 
 # Home Route
